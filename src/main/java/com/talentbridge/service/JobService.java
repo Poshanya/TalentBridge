@@ -10,6 +10,7 @@ import com.talentbridge.dto.JobUpdateRequestDTO;  // Added your DTO import
 import com.talentbridge.dto.JobResponseDTO;
 import com.talentbridge.entity.Job;
 import com.talentbridge.entity.RecruiterProfile;
+import com.talentbridge.exception.ResourceNotFoundException;
 import com.talentbridge.repository.JobRepository;
 
 @Service	
@@ -104,8 +105,9 @@ public class JobService {
 	public JobResponseDTO getJobById(Long id) {
 
 	    Job job = jobRepository.findById(id)
-	            .orElseThrow();
-
+	            .orElseThrow(() ->
+	            	new ResourceNotFoundException("Job not found with id: "+ id)
+	            		);
 	    JobResponseDTO dto = new JobResponseDTO();
 
 	    dto.setId(job.getId());

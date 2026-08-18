@@ -9,6 +9,7 @@ import com.talentbridge.dto.RecruiterUpdateRequestDTO;
 import com.talentbridge.entity.RecruiterProfile;
 import com.talentbridge.entity.Role;
 import com.talentbridge.entity.User;
+import com.talentbridge.exception.ResourceNotFoundException;
 import com.talentbridge.repository.RecruiterProfileRepository;
 
 @Service
@@ -48,7 +49,9 @@ public class RecruiterProfileService {
 
         RecruiterProfile recruiterProfile =
                 recruiterProfileRepository.findById(id)
-                .orElseThrow();
+                .orElseThrow(() ->
+	            	new ResourceNotFoundException("Recruiter not found with id: "+ id)
+	            		);
 
         User user = recruiterProfile.getUser();
 
@@ -141,6 +144,8 @@ public class RecruiterProfileService {
     public RecruiterProfile findRecruiterEntityById(Long id) {
 
         return recruiterProfileRepository.findById(id)
-                .orElseThrow();
+                .orElseThrow(() ->
+	            	new ResourceNotFoundException("Recruiter not found with id: "+ id)
+	            		);
     }
 }

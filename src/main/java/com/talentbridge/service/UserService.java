@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.talentbridge.dto.UserResponseDTO;
 import com.talentbridge.entity.User;
+import com.talentbridge.exception.ResourceNotFoundException;
 import com.talentbridge.repository.UserRepository;
 
 @Service
@@ -48,7 +49,9 @@ public class UserService {
     public UserResponseDTO getUserById(Long id) {
 
         User user = userRepository.findById(id)
-                .orElseThrow();
+                .orElseThrow(() ->
+	            	new ResourceNotFoundException("User not found with id: "+ id)
+	            		);
 
         UserResponseDTO dto = new UserResponseDTO();
 

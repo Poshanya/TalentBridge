@@ -10,6 +10,7 @@ import com.talentbridge.entity.Application;
 import com.talentbridge.entity.ApplicationStatus;
 import com.talentbridge.entity.CandidateProfile;
 import com.talentbridge.entity.Job;
+import com.talentbridge.exception.ResourceNotFoundException;
 import com.talentbridge.repository.ApplicationRepository;
 
 @Service
@@ -99,7 +100,9 @@ public class ApplicationService {
 
         Application application =
                 applicationRepository.findById(id)
-                        .orElseThrow();
+                        .orElseThrow(() ->
+    	            	new ResourceNotFoundException("Application not found with id: "+ id)
+        	            		);
 
         ApplicationResponseDTO dto =
                 new ApplicationResponseDTO();

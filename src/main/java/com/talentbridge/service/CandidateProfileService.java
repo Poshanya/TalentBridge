@@ -9,6 +9,7 @@ import com.talentbridge.dto.CandidateUpdateRequestDTO;
 import com.talentbridge.entity.CandidateProfile;
 import com.talentbridge.entity.Role;
 import com.talentbridge.entity.User;
+import com.talentbridge.exception.ResourceNotFoundException;
 import com.talentbridge.repository.CandidateProfileRepository;
 
 @Service
@@ -70,7 +71,9 @@ public class CandidateProfileService {
 
 	    CandidateProfile candidateProfile =
 	            candidateProfileRepository.findById(id)
-	            .orElseThrow();
+	            .orElseThrow(() ->
+	            	new ResourceNotFoundException("Candidate not found with id: "+ id)
+	            		);
 
 	    User user = candidateProfile.getUser();
 
