@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.talentbridge.dto.JobRequestDTO;        // Added your DTO import
+import com.talentbridge.dto.JobUpdateRequestDTO;  // Added your DTO import
 import com.talentbridge.dto.JobResponseDTO;
 import com.talentbridge.entity.Job;
 import com.talentbridge.entity.RecruiterProfile;
@@ -16,24 +18,26 @@ public class JobService {
 	private final JobRepository jobRepository;
 	private final RecruiterProfileService recruiterProfileService;
 	
-	public JobService(JobRepository jobRepository,RecruiterProfileService recruiterProfileService) {
-		this.recruiterProfileService=recruiterProfileService;
-		this.jobRepository=jobRepository;
+	public JobService(JobRepository jobRepository, RecruiterProfileService recruiterProfileService) {
+		this.recruiterProfileService = recruiterProfileService;
+		this.jobRepository = jobRepository;
 	}
 	
-	public Job createJob(Long recruiterId, Job job) {
+	// 1. POST MATCHING YOUR STYLE: Takes your JobRequestDTO, returns Job Entity
+	public Job createJob(Long recruiterId, JobRequestDTO jobDto) {
 
 		RecruiterProfile recruiter =
 		        recruiterProfileService.findRecruiterEntityById(recruiterId);
 
 	    Job newJob = new Job();
 
-	    newJob.setTitle(job.getTitle());
-	    newJob.setCompanyName(job.getCompanyName());
-	    newJob.setDescription(job.getDescription());
-	    newJob.setSkills(job.getSkills());
-	    newJob.setLocation(job.getLocation());
-	    newJob.setSalary(job.getSalary());
+	    // Mapping fields directly from your JobRequestDTO
+	    newJob.setTitle(jobDto.getTitle());
+	    newJob.setCompanyName(jobDto.getCompanyName());
+	    newJob.setDescription(jobDto.getDescription());
+	    newJob.setSkills(jobDto.getSkills());
+	    newJob.setLocation(jobDto.getLocation());
+	    newJob.setSalary(jobDto.getSalary());
 
 	    newJob.setRecruiter(recruiter);
 	    newJob.setCreatedAt(LocalDateTime.now());
@@ -41,17 +45,20 @@ public class JobService {
 
 	    return jobRepository.save(newJob);
 	}
-	public Job updateJob(Long id, Job updatedJob) {
+
+	// 2. PUT MATCHING YOUR STYLE: Takes your JobUpdateRequestDTO, returns Job Entity
+	public Job updateJob(Long id, JobUpdateRequestDTO updatedJobDto) {
 
 	    Job existingJob = jobRepository.findById(id)
 	            .orElseThrow();
 
-	    existingJob.setTitle(updatedJob.getTitle());
-	    existingJob.setCompanyName(updatedJob.getCompanyName());
-	    existingJob.setDescription(updatedJob.getDescription());
-	    existingJob.setLocation(updatedJob.getLocation());
-	    existingJob.setSalary(updatedJob.getSalary());
-	    existingJob.setSkills(updatedJob.getSkills());
+	    // Mapping fields directly from your JobUpdateRequestDTO
+	    existingJob.setTitle(updatedJobDto.getTitle());
+	    existingJob.setCompanyName(updatedJobDto.getCompanyName());
+	    existingJob.setDescription(updatedJobDto.getDescription());
+	    existingJob.setLocation(updatedJobDto.getLocation());
+	    existingJob.setSalary(updatedJobDto.getSalary());
+	    existingJob.setSkills(updatedJobDto.getSkills());
 
 	    existingJob.setUpdatedAt(LocalDateTime.now());
 
@@ -60,7 +67,7 @@ public class JobService {
 	
 	public void deleteJob(Long id) {
 	
-		Job deletejob=jobRepository.findById(id).orElseThrow();
+		Job deletejob = jobRepository.findById(id).orElseThrow();
 		jobRepository.delete(deletejob);
 	
 	}
@@ -93,6 +100,7 @@ public class JobService {
 
 	    }).toList();
 	}
+	
 	public JobResponseDTO getJobById(Long id) {
 
 	    Job job = jobRepository.findById(id)
@@ -118,7 +126,6 @@ public class JobService {
 
 	    return dto;
 	}
-	
 	
 	public Job findJobEntityById(Long id) {
 

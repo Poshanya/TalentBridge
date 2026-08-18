@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.talentbridge.dto.ApplicationResponseDTO;
 import com.talentbridge.entity.Application;
+import com.talentbridge.entity.ApplicationStatus;
 import com.talentbridge.entity.CandidateProfile;
 import com.talentbridge.entity.Job;
 import com.talentbridge.repository.ApplicationRepository;
@@ -44,7 +45,7 @@ public class ApplicationService {
 
         newApplication.setCandidateProfile(candidate);
         newApplication.setJob(job);
-        newApplication.setStatus("APPLIED");
+        newApplication.setStatus(ApplicationStatus.APPLIED);
         newApplication.setAppliedAt(LocalDateTime.now());
 
         return applicationRepository.save(newApplication);
@@ -52,46 +53,48 @@ public class ApplicationService {
 
     public List<ApplicationResponseDTO> getAllApplications() {
 
-        List<Application> applications =
-                applicationRepository.findAll();
+        List<Application> applications = applicationRepository.findAll();
 
         return applications.stream().map(application -> {
 
-            ApplicationResponseDTO dto =
-                    new ApplicationResponseDTO();
+            ApplicationResponseDTO dto = new ApplicationResponseDTO();
 
             dto.setId(application.getId());
-            dto.setStatus(application.getStatus());
             dto.setAppliedAt(application.getAppliedAt());
             dto.setUpdatedAt(application.getUpdatedAt());
 
-            dto.setCandidateId(
-                    application.getCandidateProfile().getId()
-            );
+            // 1. Safe Status Null Check
+            if (application.getStatus() != null) {
+                dto.setStatus(application.getStatus().toString());
+            } else {
+                dto.setStatus("APPLIED");
+            }
 
-            dto.setCandidateName(
-                    application.getCandidateProfile()
-                            .getUser()
-                            .getName()
-            );
+            // 2. Safe Candidate Null Check
+            if (application.getCandidateProfile() != null) {
+                dto.setCandidateId(application.getCandidateProfile().getId());
+                
+                // Safe User Null Check
+                if (application.getCandidateProfile().getUser() != null) {
+                    dto.setCandidateName(application.getCandidateProfile().getUser().getName());
+                } else {
+                    dto.setCandidateName("Unknown User Account");
+                }
+            }
 
-            dto.setJobId(
-                    application.getJob().getId()
-            );
-
-            dto.setJobTitle(
-                    application.getJob().getTitle()
-            );
-
-            dto.setCompanyName(
-                    application.getJob().getCompanyName()
-            );
+            // 3. Safe Job Null Check
+            if (application.getJob() != null) {
+                dto.setJobId(application.getJob().getId());
+                dto.setJobTitle(application.getJob().getTitle());
+                dto.setCompanyName(application.getJob().getCompanyName());
+            }
 
             return dto;
 
         }).toList();
     }
 
+    
     public ApplicationResponseDTO getApplicationById(Long id) {
 
         Application application =
@@ -102,7 +105,7 @@ public class ApplicationService {
                 new ApplicationResponseDTO();
 
         dto.setId(application.getId());
-        dto.setStatus(application.getStatus());
+        dto.setStatus(application.getStatus().name());
         dto.setAppliedAt(application.getAppliedAt());
         dto.setUpdatedAt(application.getUpdatedAt());
 
@@ -131,17 +134,15 @@ public class ApplicationService {
         return dto;
     }
 
-    public Application updateApplication(
-            Long id,
-            Application updatedApplication) {
+    // 2. UPDATED: Accepts the strict ApplicationStatus Enum parameter directly
+    public Application updateApplication(Long id, ApplicationStatus newStatus) {
 
         Application existingApplication =
                 applicationRepository.findById(id)
                 .orElseThrow();
 
-        existingApplication.setStatus(
-                updatedApplication.getStatus());
-        existingApplication.setUpdatedAt(updatedApplication.getUpdatedAt());
+        existingApplication.setStatus(newStatus);
+        existingApplication.setUpdatedAt(LocalDateTime.now()); // Automatically sets the update clock
 
         return applicationRepository.save(existingApplication);
     }

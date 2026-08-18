@@ -11,9 +11,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.talentbridge.dto.JobRequestDTO;        // Added DTO Import
+import com.talentbridge.dto.JobUpdateRequestDTO;  // Added DTO Import
 import com.talentbridge.dto.JobResponseDTO;
 import com.talentbridge.entity.Job;
 import com.talentbridge.service.JobService;
+import jakarta.validation.Valid;                  // Added Validation Import
 
 @RestController
 @RequestMapping("/jobs")
@@ -25,12 +28,13 @@ public class JobController {
         this.jobService = jobService;
     }
 
+    // 1. UPDATED FOR POST: Accepts JobRequestDTO with validation
     @PostMapping("/recruiter/{recruiterId}")
     public Job createJob(
             @PathVariable Long recruiterId,
-            @RequestBody Job job) {
+            @Valid @RequestBody JobRequestDTO jobDto) { // Swapped to DTO + added @Valid
 
-        return jobService.createJob(recruiterId, job);
+        return jobService.createJob(recruiterId, jobDto);
     }
 
     @GetMapping
@@ -43,12 +47,13 @@ public class JobController {
         return jobService.getJobById(id);
     }
 
+    // 2. UPDATED FOR PUT: Accepts JobUpdateRequestDTO with validation
     @PutMapping("/{id}")
     public Job updateJob(
             @PathVariable Long id,
-            @RequestBody Job updatedJob) {
+            @Valid @RequestBody JobUpdateRequestDTO updatedJobDto) { // Swapped to DTO + added @Valid
 
-        return jobService.updateJob(id, updatedJob);
+        return jobService.updateJob(id, updatedJobDto);
     }
 
     @DeleteMapping("/{id}")

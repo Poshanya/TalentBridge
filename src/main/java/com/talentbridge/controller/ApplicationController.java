@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.talentbridge.dto.ApplicationResponseDTO;
 import com.talentbridge.entity.Application;
+import com.talentbridge.entity.ApplicationStatus;
 import com.talentbridge.service.ApplicationService;
 
 @RestController
@@ -49,14 +50,13 @@ public class ApplicationController {
         return applicationService.getApplicationById(id);
     }
 
+ // PUT: Receives a raw ApplicationStatus enum payload from the request body
     @PutMapping("/{id}")
     public Application updateApplication(
             @PathVariable Long id,
-            @RequestBody Application application) {
+            @RequestBody ApplicationStatus status) { // Spring automatically validates the incoming enum value!
 
-        return applicationService.updateApplication(
-                id,
-                application);
+        return applicationService.updateApplication(id, status);
     }
 
     @DeleteMapping("/{id}")
