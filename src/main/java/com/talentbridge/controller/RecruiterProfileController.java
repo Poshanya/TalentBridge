@@ -12,10 +12,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.talentbridge.dto.RecruiterResponseDTO;
+import com.talentbridge.dto.RecruiterUpdateRequestDTO;
 import com.talentbridge.entity.RecruiterProfile;
-import com.talentbridge.entity.RecruiterRequest;
+import com.talentbridge.entity.RecruiterRequestDTO;
 import com.talentbridge.entity.User;
 import com.talentbridge.service.RecruiterProfileService;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/recruiters")
@@ -36,20 +39,21 @@ public class RecruiterProfileController {
 	}
 	
 	@PostMapping
-	public RecruiterProfile createRecruiterProfile(User user,@RequestBody RecruiterRequest request) {
+	public RecruiterProfile createRecruiterProfile(User user,@Valid @RequestBody RecruiterRequestDTO request) {
 		
 		return recruiterProfileService.createRecruiter(
 				request.getUser(),
 				request.getRecruiterProfile()
 				);
 	}
-		@PutMapping("/{id}")
-		public RecruiterProfile updateRecruiterProfile(
-		        @PathVariable Long id,
-		        @RequestBody RecruiterProfile recruiterProfile) {
+	@PutMapping("/{id}")
+	public RecruiterProfile updateRecruiter(
+	        @PathVariable Long id,
+	        @Valid @RequestBody RecruiterUpdateRequestDTO updatedProfile) {
 
-		    return recruiterProfileService.updateRecruiter(id, recruiterProfile);
-		}
+	    return recruiterProfileService.updateRecruiter(
+	            id, updatedProfile);
+	}
 		
 		@DeleteMapping("/{id}")
 		public void  deleteRecruiterProfile(@PathVariable Long id) {

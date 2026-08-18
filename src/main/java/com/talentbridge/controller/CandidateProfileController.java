@@ -12,9 +12,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.talentbridge.dto.CandidateResponseDTO;
+import com.talentbridge.dto.CandidateUpdateRequestDTO;
 import com.talentbridge.entity.CandidateProfile;
-import com.talentbridge.entity.CandidateRequest;
+import com.talentbridge.entity.CandidateRequestDTO;
 import com.talentbridge.service.CandidateProfileService;
+
+import jakarta.validation.Valid;
 
 
 @RestController
@@ -32,7 +35,7 @@ public class CandidateProfileController {
 
     @PostMapping
     public CandidateProfile createCandidate(
-            @RequestBody CandidateRequest request) {
+          @Valid  @RequestBody CandidateRequestDTO request) {
 
         return candidateProfileService.createCandidate(
                 request.getUser(),
@@ -47,10 +50,10 @@ public class CandidateProfileController {
     @PutMapping("/{id}")
     public CandidateProfile updateCandidate(
             @PathVariable Long id,
-            @RequestBody CandidateProfile candidateProfile) {
+           @Valid @RequestBody CandidateUpdateRequestDTO updatedProfile) {
 
         return candidateProfileService.updatedCandidate(
-                id, candidateProfile);
+                id, updatedProfile);
     }
 
     @DeleteMapping("/{id}")

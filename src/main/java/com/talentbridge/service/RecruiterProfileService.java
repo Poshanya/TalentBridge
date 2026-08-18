@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.talentbridge.dto.RecruiterResponseDTO;
+import com.talentbridge.dto.RecruiterUpdateRequestDTO;
 import com.talentbridge.entity.RecruiterProfile;
 import com.talentbridge.entity.Role;
 import com.talentbridge.entity.User;
@@ -73,16 +74,23 @@ public class RecruiterProfileService {
 
     public RecruiterProfile updateRecruiter(
             Long id,
-            RecruiterProfile updatedProfile) {
+            RecruiterUpdateRequestDTO updatedProfile) {
 
         RecruiterProfile existingProfile =
                 recruiterProfileRepository.findById(id)
                 .orElseThrow();
 
-        existingProfile.setCompanyName(updatedProfile.getCompanyName());
-        existingProfile.setLocation(updatedProfile.getLocation());
-        existingProfile.setDesignation(updatedProfile.getDesignation());
-        existingProfile.setPhone(updatedProfile.getPhone());
+        existingProfile.setCompanyName(
+                updatedProfile.getCompanyName());
+
+        existingProfile.setLocation(
+                updatedProfile.getLocation());
+
+        existingProfile.setDesignation(
+                updatedProfile.getDesignation());
+
+        existingProfile.setPhone(
+                updatedProfile.getPhone());
 
         return recruiterProfileRepository.save(existingProfile);
     }
